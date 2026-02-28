@@ -3,120 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AKR EXPRESS | Seat Booking</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>AKR EXPRESS | Official</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #003366; --accent: #C41E3A; --bg: #0f172a; --card: #ffffff; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: #f8fafc; padding-bottom: 100px; }
-        header { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); padding: 20px; text-align: center; border-bottom: 3px solid var(--accent); position: sticky; top: 0; z-index: 1000; }
-        .logo { font-family: 'Orbitron', sans-serif; font-size: 24px; color: white; margin: 0; }
+        :root { --primary: #003366; --accent: #C41E3A; --bg: #f1f5f9; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: #1e293b; padding-bottom: 120px; }
+        header { background: #0f172a; color: white; padding: 15px; text-align: center; border-bottom: 4px solid var(--accent); }
+        .lang-bar { display: flex; justify-content: center; gap: 10px; padding: 10px; background: #e2e8f0; }
+        .lang-btn { padding: 5px 12px; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: bold; }
         .container { max-width: 450px; margin: 0 auto; padding: 15px; }
-        .glass-card { background: var(--card); color: #1e293b; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-bottom: 20px; }
-        h3 { font-size: 14px; color: var(--accent); margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 8px; }
-        label { font-size: 11px; font-weight: 700; color: #64748b; display: block; margin: 12px 0 5px; }
-        select, input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 14px; box-sizing: border-box; }
+        .card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h3 { color: var(--accent); font-size: 16px; margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        label { font-size: 12px; font-weight: 700; color: #64748b; display: block; margin: 10px 0 5px; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; }
         
-        /* Bus Interior */
-        .bus-interior { background: #f1f5f9; border-radius: 40px 40px 20px 20px; padding: 30px 15px; border: 4px solid #cbd5e1; position: relative; }
-        .driver-area { display: flex; justify-content: flex-end; padding-bottom: 20px; border-bottom: 2px dashed #cbd5e1; margin-bottom: 20px; }
-        .steering { width: 45px; transform: rotate(-20deg); }
-        
-        .seat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-        .seat-grid div:nth-child(4n-2) { margin-right: 30px; } /* Aisle space */
-        
-        .seat { aspect-ratio: 1/1; border: 2px solid #94a3b8; border-radius: 8px; background: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .seat.selected { background: #10b981 !important; color: white; border-color: #059669; }
-        .seat.booked { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; border-color: #cbd5e1; }
-        
-        .back-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 15px; }
+        /* Bus Layout */
+        .bus-frame { background: #fff; border: 3px solid #94a3b8; border-radius: 40px 40px 10px 10px; padding: 25px 15px; position: relative; }
+        .driver-side { display: flex; justify-content: flex-end; padding-bottom: 15px; border-bottom: 2px dashed #e2e8f0; margin-bottom: 20px; }
+        .steering { width: 40px; }
+        .seats-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .seats-container div:nth-child(4n-2) { margin-right: 30px; }
+        .seat { aspect-ratio: 1/1; border: 1.5px solid #64748b; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; cursor: pointer; }
+        .seat.selected { background: #10b981; color: white; border-color: #059669; }
+        .back-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 10px; }
 
-        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); }
-        .btn-group { display: flex; flex-direction: column; gap: 5px; }
-        .btn-book { background: var(--accent); color: white; border: none; padding: 12px 25px; border-radius: 10px; font-weight: 800; cursor: pointer; }
-        .btn-card { background: var(--primary); color: white; border: none; padding: 8px 25px; border-radius: 10px; font-size: 11px; font-weight: 600; cursor: pointer; }
+        .footer { position: fixed; bottom: 0; width: 100%; background: white; padding: 15px 20px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
+        .book-btn { background: var(--accent); color: white; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; width: 100%; cursor: pointer; }
+        .price-total { font-size: 18px; font-weight: 800; color: var(--primary); }
     </style>
 </head>
-<body onload="init()">
+<body>
 
 <header>
-    <h1 class="logo">AKR EXPRESS</h1>
+    <div style="font-size: 20px; font-weight: 800; letter-spacing: 1px;">AKR EXPRESS</div>
 </header>
 
+<div class="lang-bar">
+    <button class="lang-btn" onclick="setLang('en')">English</button>
+    <button class="lang-btn" onclick="setLang('si')">සිංහල</button>
+    <button class="lang-btn" onclick="setLang('ta')">தமிழ்</button>
+</div>
+
 <div class="container">
-    <div class="glass-card">
-        <h3>📍 Journey</h3>
-        <label>FROM</label>
-        <select id="f" onchange="up()">
-            <option value="Colombo">Colombo</option>
-            <option value="Mannar">Mannar</option>
-        </select>
-        <label>TO</label>
-        <select id="t" onchange="up()">
-            <option value="Mannar">Mannar</option>
-            <option value="Colombo">Colombo</option>
-        </select>
-        <div style="text-align: center; margin-top: 15px; font-weight: 800; color: #9f1239;">
-            Rs. <span id="pv">1790</span>
-        </div>
+    <div class="card">
+        <h3 id="h-journey">📍 Journey Details</h3>
+        <label id="l-from">FROM</label>
+        <select id="f"><option>Colombo</option><option>Mannar</option></select>
+        <label id="l-to">TO</label>
+        <select id="t"><option>Mannar</option><option>Colombo</option></select>
     </div>
 
-    <div class="glass-card">
-        <h3>🚌 Seats (Driver Behind)</h3>
-        <div class="bus-interior">
-            <div class="driver-area">
-                <img class="steering" src="https://cdn-icons-png.flaticon.com/512/744/744465.png">
-            </div>
-            <div class="seat-grid" id="mg"></div>
-            <div class="back-row" id="bg"></div>
+    <div class="card">
+        <h3 id="h-seats">🚌 Select Your Seats</h3>
+        <div class="bus-frame">
+            <div class="driver-side"><img class="steering" src="https://cdn-icons-png.flaticon.com/512/744/744465.png"></div>
+            <div class="seats-container" id="main-seats"></div>
+            <div class="back-row" id="back-row"></div>
         </div>
     </div>
 </div>
 
 <div class="footer">
-    <div>
-        <div id="sc" style="font-size: 11px; color: #64748b;">0 SEATS SELECTED</div>
-        <div id="tp" style="font-size: 20px; font-weight: 800; color: var(--primary);">Rs. 0</div>
+    <div style="width: 45%;">
+        <div id="selected-txt" style="font-size: 10px; color: #64748b;">0 SEATS</div>
+        <div class="price-total" id="total-price">Rs. 0</div>
     </div>
-    <div class="btn-group">
-        <button class="btn-book" onclick="bk()">WhatsApp Book</button>
-        <button class="btn-card" onclick="alert('Card Payment Coming Soon!')">Pay by Card</button>
+    <div style="width: 50%;">
+        <button class="book-btn" id="btn-book" onclick="book()">WhatsApp Book</button>
     </div>
 </div>
 
 <script>
-    let sl = [];
+    const translations = {
+        en: { journey: "Journey Details", from: "FROM", to: "TO", seats: "Select Your Seats", selected: "SEATS SELECTED", book: "WhatsApp Book" },
+        si: { journey: "ගමන් විස්තර", from: "පිටත්වීම", to: "ගමනාන්තය", seats: "අසුන් තෝරාගන්න", selected: "තෝරාගත් අසුන්", book: "වෙන්කරවා ගන්න" },
+        ta: { journey: "பயண விவரங்கள்", from: "இருந்து", to: "வரை", seats: "இருக்கையைத் தேர்ந்தெடுக்கவும்", selected: "தேர்ந்தெடுக்கப்பட்டவை", book: "பதிவு කරන්න" }
+    };
+
+    let selectedSeats = [];
     const pricePerSeat = 1790;
 
+    function setLang(lang) {
+        document.getElementById('h-journey').innerText = translations[lang].journey;
+        document.getElementById('l-from').innerText = translations[lang].from;
+        document.getElementById('l-to').innerText = translations[lang].to;
+        document.getElementById('h-seats').innerText = translations[lang].seats;
+        document.getElementById('btn-book').innerText = translations[lang].book;
+        updateUI();
+    }
+
     function init() {
-        const m = document.getElementById('mg'), b = document.getElementById('bg');
-        // Layout: 1-32 seats
-        for(let i=1; i<=32; i++) { m.appendChild(cr(i)); }
-        // Last row: 5 seats
-        for(let i=33; i<=37; i++) { b.appendChild(cr(i)); }
+        const main = document.getElementById('main-seats'), back = document.getElementById('back-row');
+        for(let i=1; i<=32; i++) main.appendChild(createSeat(i));
+        for(let i=33; i<=37; i++) back.appendChild(createSeat(i));
+        setLang('si');
     }
 
-    function cr(n) {
-        const d = document.createElement('div');
-        d.className = 'seat';
-        d.innerText = n;
-        d.onclick = () => {
-            d.classList.toggle('selected');
-            if(sl.includes(n)) sl = sl.filter(x => x !== n); else sl.push(n);
-            updateTotal();
+    function createSeat(n) {
+        const s = document.createElement('div');
+        s.className = 'seat';
+        s.innerText = n;
+        s.onclick = () => {
+            s.classList.toggle('selected');
+            if(selectedSeats.includes(n)) selectedSeats = selectedSeats.filter(x => x !== n);
+            else selectedSeats.push(n);
+            updateUI();
         };
-        return d;
+        return s;
     }
 
-    function updateTotal() {
-        document.getElementById('sc').innerText = `${sl.length} SEAT(S) SELECTED`;
-        document.getElementById('tp').innerText = `Rs. ${sl.length * pricePerSeat}`;
+    function updateUI() {
+        document.getElementById('selected-txt').innerText = `${selectedSeats.length} SEATS`;
+        document.getElementById('total-price').innerText = `Rs. ${selectedSeats.length * pricePerSeat}`;
     }
 
-    function bk() {
-        if(sl.length === 0) return alert("Please select a seat!");
-        const msg = `Booking for AKR EXPRESS%0ASeats: ${sl.join(', ')}%0ATotal: Rs. ${sl.length * pricePerSeat}`;
+    function book() {
+        if(selectedSeats.length === 0) return alert("Please select a seat!");
+        const msg = `AKR EXPRESS BOOKING%0ASeats: ${selectedSeats.join(', ')}%0ATotal: Rs. ${selectedSeats.length * pricePerSeat}`;
         window.open(`https://wa.me/94779998813?text=${msg}`);
     }
+    init();
 </script>
 </body>
 </html>
