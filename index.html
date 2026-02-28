@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AKR EXPRESS | Official Booking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #003366; --accent: #C41E3A; --bg: #0f172a; --card: #ffffff; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: #f8fafc; }
+        
+        header { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); padding: 20px; text-align: center; border-bottom: 3px solid var(--accent); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-family: 'Orbitron', sans-serif; font-size: 24px; color: white; letter-spacing: 2px; margin: 0; }
+        .tagline { font-size: 10px; color: #94a3b8; text-transform: uppercase; margin-top: 5px; }
+
+        .container { max-width: 450px; margin: 0 auto; padding: 15px; }
+
+        .glass-card { background: var(--card); color: #1e293b; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-bottom: 20px; }
+        h3 { font-size: 14px; color: var(--accent); margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+
+        label { font-size: 11px; font-weight: 700; color: #64748b; display: block; margin: 12px 0 5px; }
+        select, input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 14px; font-weight: 600; box-sizing: border-box; }
+
+        .price-box { background: #fff1f2; border-radius: 12px; padding: 15px; text-align: center; margin-top: 15px; border: 1px solid #fecdd3; }
+        .price-val { font-size: 28px; font-weight: 800; color: #9f1239; }
+
+        /* Bus Seat UI */
+        .bus-interior { background: #f1f5f9; border-radius: 30px; padding: 25px 15px; border: 3px solid #cbd5e1; }
+        .steering { width: 40px; float: right; opacity: 0.7; margin-bottom: 20px; }
+        
+        .seat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; clear: both; }
+        .seat-grid div:nth-child(4n-2) { margin-right: 35px; } /* Aisle */
+
+        .seat { 
+            aspect-ratio: 1/1; border: 2px solid #475569; border-radius: 8px; 
+            background: white; display: flex; align-items: center; justify-content: center; 
+            font-size: 12px; font-weight: 700; cursor: pointer;
+        }
+        .seat.selected { background: #10b981 !important; color: white !important; border-color: #065f46 !important; }
+        .seat.counter { background: #fbbf24; border-color: #d97706; }
+        
+        .back-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; margin-top: 15px; padding-top: 15px; border-top: 2px dashed #cbd5e1; }
+
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); z-index: 1000; }
+        .btn-book { background: var(--accent); color: white; border: none; padding: 15px 35px; border-radius: 12px; font-weight: 800; font-size: 15px; cursor: pointer; }
+    </style>
+</head>
+<body onload="init()">
+
+<header>
+    <h1 class="logo">AKR EXPRESS</h1>
+    <div class="tagline">Luxury Travel • Timely Arrival</div>
+</header>
+
+<div class="container">
+    <div class="glass-card">
+        <h3>📍 Journey Details</h3>
+        <label>DATE</label>
+        <input type="date" id="d">
+        <label>FROM</label>
+        <select id="f" onchange="up()"></select>
+        <label>TO</label>
+        <select id="t" onchange="up()"></select>
+
+        <div class="price-box">
+            <div style="font-size: 10px; font-weight: 800;">TICKET PRICE</div>
+            <div class="price-val">Rs. <span id="pv">1790</span></div>
+        </div>
+    </div>
+
+    <div class="glass-card">
+        <h3>🚌 Select Seats</h3>
+        <div class="bus-interior">
+            <img class="steering" src="https://cdn-icons-png.flaticon.com/512/744/744465.png">
+            <div class="seat-grid" id="mg"></div>
+            <div class="back-row" id="bg"></div>
+        </div>
+    </div>
+    <div style="height: 100px;"></div>
+</div>
+
+<div class="footer">
+    <div>
+        <div id="sc" style="font-size: 11px; color: #64748b;">0 SEATS</div>
+        <div id="tp" style="font-size: 20px; font-weight: 800; color: var(--primary);">Rs. 0</div>
+    </div>
+    <button class="btn-book" onclick="bk()">BOOK NOW</button>
+</div>
+
+<script>
+    const fm = { "Colombo": {"Thelwatta": 270, "Chilaw": 500, "Mundalama": 640, "Puttalam": 785, "Nochchiyagama": 1050, "Anuradhapura": 1175, "Madawachchiya": 1330, "Thanthirimale": 1440, "Mannar": 1790} };
+    let sl = [];
+    let u = 1790;
+
+    function init() {
+        const f = document.getElementById('f'), t = document.getElementById('t');
+        const ts = ["Colombo", "Thelwatta", "Chilaw", "Mundalama", "Puttalam", "Nochchiyagama", "Anuradhapura", "Madawachchiya", "Thanthirimale", "Mannar"];
+        ts.forEach(x => { f.innerHTML += `<option>${x}</option>`; t.innerHTML += `<option>${x}</option>`; });
+        t.value = "Mannar";
+        document.getElementById('d').valueAsDate = new Date();
+        const m = document.getElementById('mg'), b = document.getElementById('bg');
+        const ly = [1,2,4,3, 5,6,8,7, 9,10,12,11, 13,14,16,15, 17,18,20,19, 21,22,24,23, 25,26,28,27, 29,30,32,31, 33,34];
+        ly.forEach(n => m.appendChild(cr(n)));
+        [35,36,37,38,39].forEach(n => b.appendChild(cr(n)));
+    }
+
+    function cr(n) {
+        const d = document.createElement('div');
+        d.className = 'seat' + (n <= 12 ? ' counter' : '');
+        d.innerText = n;
+        d.onclick = () => {
+            d.classList.toggle('selected');
+            if(sl.includes(n)) sl = sl.filter(x => x !== n); else sl.push(n);
+            document.getElementById('sc').innerText = `${sl.length} SEAT(S)`;
+            document.getElementById('tp').innerText = `Rs. ${sl.length * u}`;
+        };
+        return d;
+    }
+
+    function up() {
+        const s = document.getElementById('f').value, e = document.getElementById('t').value;
+        u = (fm[s] && fm[s][e]) ? fm[s][e] : 1790;
+        document.getElementById('pv').innerText = u;
+        document.getElementById('tp').innerText = `Rs. ${sl.length * u}`;
+    }
+
+    function bk() {
+        if(sl.length === 0) return alert("Select a seat!");
+        const m = `*AKR EXPRESS*%0ADate: ${document.getElementById('d').value}%0ARoute: ${document.getElementById('f').value} to ${document.getElementById('t').value}%0ASeats: ${sl.sort((a,b)=>a-b).join(', ')}%0ATotal: Rs. ${sl.length * u}`;
+        window.open(`https://wa.me/94779998813?text=${m}`);
+    }
+</script>
+</body>
+</html>
